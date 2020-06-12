@@ -29,7 +29,11 @@ import dask.array as da
 import pytest
 
 from hyperspy.misc.io.fei_stream_readers import (
-    array_to_stream, stream_to_array, stream_to_sparse_COO_array)
+    array_to_stream, stream_to_array, stream_to_sparse_COO_array,
+    stream_to_array_vector, stream_to_sparse_COO_array_vector,
+    stream_to_sparse_COO_array_vector_numba,
+    stream_to_array_vector_numba,
+    )
 
 
 @pytest.mark.parametrize("lazy", (True, False))
