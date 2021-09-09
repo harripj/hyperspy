@@ -34,7 +34,7 @@ description = ('Read support for TVIPS CMOS camera stream/movie files. Can be'
                'used for in-situ movies or 4D-STEM datasets.')
 full_support = False
 # Recognised file extension
-file_extensions = ['blo', 'BLO']
+file_extensions = ['tvips', 'TVIPS']
 default_extension = 0
 # Writing capabilities:
 writes = False
@@ -249,8 +249,8 @@ def file_reader(filename,
             indices = _guess_scan_index_grid(record_idxs, scan_start_frame, scan_stop_frame)
         # scan shape and start are provided
         else:
-            total_scan_frames = scan_shape[0] * scan_shape[1]
-            indices = np.arange(scan_start_frame, scan_start_frame+total_scan_frames).reshape(scan_shape[0], scan_shape[1])
+            total_scan_frames = np.prod(scan_shape)
+            indices = np.arange(scan_start_frame, scan_start_frame+total_scan_frames).reshape(scan_shape)
 
         # with winding scan, every second column or row must be inverted
         # due to hysteresis there is also a predictable offset
@@ -281,7 +281,9 @@ def file_reader(filename,
                 'name': names[i],
                 'scale': scales[i],
                 'offset': offsets[i],
-                'units': units[i], }
+                'units': units[i],
+                'navigate': True if i < len(scan_shape) else False,
+            }
             for i in range(dim)]
         if lazy:
             data_stack = data_stack.rechunk({0: "auto", 1: "auto", 2: None, 3: None})
@@ -302,7 +304,9 @@ def file_reader(filename,
                 'name': names[i],
                 'scale': scales[i],
                 'offset': offsets[i],
-                'units': units[i], }
+                'units': units[i], 
+                'navigate': True if not i else False
+            }
             for i in range(dim)]
         if lazy:
             data_stack = data_stack.rechunk({0: "auto", 1: None, 2: None})
